@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "pictrieva"
+version = "0.1.0"
+description = "Python library for mass download/scraping of images from different sites"
+authors = ["Tensor <narutokelechi@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
