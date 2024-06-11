@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pictrieva"
+name = "pictriever"
 version = "0.1.0"
 description = "Python library for mass download/scraping of images from different sites"
 authors = ["Tensor <narutokelechi@gmail.com>"]
