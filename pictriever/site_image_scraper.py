@@ -1,39 +1,49 @@
+import rich, argparse, shutil, sys, os, time, requests, math
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.
-import requests
-import os
-import time
-import sys
-import math
-import shutil
-import rich
-import argparse
 from tqdm.auto import tqdm
 from selenium import webdriver
-webdriver.
 
 
-class Pexels():
+# utility functions
+def _format_string(search_string: str):  # to remove spaces in search terms
+    return search_string.replace(' ', '+')
+
+def _scrolldelay(driver, min_count):
+    time.sleep(2)
+    # scrolling down slowly
+    stopScrolling = 0
+    print('scrolling to load more')
+    while True:
+        stopScrolling += 1
+        driver.execute_script("window.scrollBy(0,40)")
+        time.sleep(0.1)
+        if stopScrolling > math.floor(min_count/2):
+            break
+        time.sleep(1)
+
+def _init_webdriver(url):
+    drive_opts = Options()
+    drive_opts.add_argument('-headless')
+    driver = webdriver.Firefox(options=drive_opts)
+    driver.maximize_window()
+    driver.get(url)
+    print('webdriver initialized')
+    return driver
+
+def _quit_driver(driver):
+        driver.quit()
+
+
+
+class Pexelscraper():
     def __init__(self, search_term: str, max_count: int, min_count: int):
-        self.search_term = self._format_string(search_term)
+        self.search_term = _format_string(search_term)
         self.pexel_url = f"https://www.pexels.com/search/{self.search_term}"
         self.pexel_img_class = "MediaCard_image__yVXRE"
         self.max_count = max_count
         self.min_count = min_count
-        self.driver = self._init_webdriver()
-
-    def _format_string(self, search_string: str):  # to remove spces in search terms
-        return search_string.replace(' ', '+')
-
-    def _init_webdriver(self):
-        drive_opts = Options()
-        drive_opts.add_argument('-headless')
-        driver = webdriver.Firefox(options=drive_opts)
-        driver.maximize_window()
-        driver.get(self.pexel_url)
-        print('webdriver initialized')
-        return driver
+        self.driver =  _init_webdriver()
 
     def _scrolldelay(self):
         time.sleep(2)
@@ -50,11 +60,11 @@ class Pexels():
 
     def get_imlinks(self, get_all_links: bool = False):
         if self.min_count > 100:
-            self._scrolldelay(self.min_count)
+            _scrolldelay(self.driver, self.min_count)
+
         try:
             driver = self.driver
-            image_links = driver.find_elements(
-                By.CSS_SELECTOR, f"img.{self.pexel_img_class}")
+            image_links = driver.find_elements(By.CSS_SELECTOR, f"img.{self.pexel_img_class}")
 #             image_links = image_links.find_elements(By.TAG_NAME, 'a')
 
 #             print(image_links)
@@ -134,7 +144,7 @@ class GoogleImageScraper():
         print("scrolling to load more")
         while True:
             stopScrolling += 1
-            driver.execute_script("window.scrollBy(0,40)")
+            self.driver.execute_script("window.scrollBy(0,40)")
             time.sleep(0.1)
             if stopScrolling > math.floor(self.min_count / 2):
                 break
@@ -197,3 +207,62 @@ class GoogleImageScraper():
 
     def quit_driver(self):
         self.driver.quit()
+
+
+class BingImages():
+     def __init__(self, search_term: str, min_count: int, max_count: int):
+        self.search_term = _format_string(search_term)
+        self.bing_url = f'https://www.bing.com/images/search?q={self.search_term}&form=HDRSC3&first=1&cw=1177&ch=621'
+        self.bing_imlink_class = 'iusc'
+        self.max_count = max_count
+        self.min_count = min_count
+        self.driver = _init_webdriver(self.bing_url)
+
+    def get_imlinks(self, get_all_links: bool = False):
+        if self.min_count > 100:
+            _scrolldelay(self.driver, self.min_count)
+
+        try:
+            image_links = self.driver.find_elements(By.CSS_SELECTOR, f"a.{self.bing_imlink_class}")
+            image_links = [link.get_attribute('href') for link in image_links]
+            print(image_links)
+            link_count = len(image_links)
+            links = image_links[:self.max_count] if get_all_links else image_links
+            # print number of links
+            print(f'{link_count} links acquired from Bing images, using {len(links)}...')
+            return links
+
+        except Exception as e:
+            print(f'e => [{e}]')
+
+
+    def download_images(self, link_list: list, output_folder: str, verbose: bool = False):
+        k = 0
+        if not os.path.exists(output_folder):
+            os.mkdir(output_folder)
+
+        for image_link in tqdm(link_list):
+            try:
+                # fetch content from url
+                file_res = requests.get(image_link, stream=True)
+                image_file = os.path.basename(image_link)
+                image_file = os.path.join(output_folder, f'bing_{self.search_term}_{k}.png')  # output file path
+
+                with open(image_file, "wb") as file_writer:
+                    file_res.raw.decode_content = True
+                    # save to folder
+                    shutil.copyfileobj(file_res.raw, file_writer)
+
+                if verbose:  # show download count and progress
+                    print(f'image @ {k+1} downloaded')
+                k += 1  # file counter
+
+            except Exception as e:  # exception handling
+                print(f"[> {e}]")
+                continue
+
+        print(f'{k} images downloaded from Bing images')  # sucess message
+
+    def _quit_driver(self):
+        self.driver.quit()
+
