@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "pictriever"
 version = "0.1.0"
-description = "Python library for mass download/scraping of images from different sites"
-authors = ["tensor_kelechi <narutokelechi@gmail.com>"]
+description = "Python library for image scraping from popular image gallery sites"
+authors = ["tensor_kelechi <kelechichibuzo7@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -12,6 +12,10 @@ requests = "^2.32.3"
 selenium = "^4.21.0"
 tqdm = "^4.66.4"
 
+
+[tool.poetry.group.tests.dependencies]
+pytest = "^8.2.2"
+requests-mock = "^1.12.1"
 
 [build-system]
 requires = ["poetry-core"]

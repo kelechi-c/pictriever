@@ -1,14 +1,15 @@
-# Pictriever (*not yet released*)
-### An image scraping scraping library in python...
-#### for efficient and flexible mass download of images, dataset creation etc
+## pictriever (*still in development..*)
+##### An image scraping scraping library in python...
+##### for efficient and flexible mass download of images, dataset creation etc
 
-## Usage guide 
+### usage guide
 pictriever can be used for downloading a wide range images in few lines of Python, from popular image sites like Bing images, Pexels, Google, etc.
 
-Install the library with 
-`pip install pictriever`
+Install the library with `pip install pictriever`
+
 
 For images from Pexels(You could also use this template for others)
+
 ```python
 from pictriever.image_scraper import Pexelscraper
 # sample code for downlaoding images of clouds
