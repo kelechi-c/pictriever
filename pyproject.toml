@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pictriever"
-version = "0.1.0"
-description = "Python library for image scraping from popular image gallery sites"
+version = "0.1.1"
+description = "Python library for image scraping, from popular image gallery sites."
 authors = ["tensorkelechi <kelechichibuzo7@gmail.com>"]
 readme = "README.md"
 homepage = "https://github.com/kelechi-c/pictriever"
