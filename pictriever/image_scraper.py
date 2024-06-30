@@ -31,10 +31,6 @@ def _init_webdriver(url):
     print('webdriver initialized')
     return driver
 
-def _quit_driver(driver):
-        driver.quit()
-
-
 
 class Pexelscraper():
     def __init__(self, search_term: str, max_count: int, min_count: int):
@@ -43,7 +39,7 @@ class Pexelscraper():
         self.pexel_img_class = "MediaCard_image__yVXRE"
         self.max_count = max_count
         self.min_count = min_count
-        self.driver =  _init_webdriver()
+        self.driver =  _init_webdriver(self.pexel_url)
 
     def _scrolldelay(self):
         time.sleep(2)
@@ -218,7 +214,7 @@ class BingImages():
         self.min_count = min_count
         self.driver = _init_webdriver(self.bing_url)
 
-    def get_imlinks(self, get_all_links: bool = False):
+     def get_imlinks(self, get_all_links: bool = False):
         if self.min_count > 100:
             _scrolldelay(self.driver, self.min_count)
 

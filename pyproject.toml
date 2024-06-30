@@ -2,11 +2,15 @@
 name = "pictriever"
 version = "0.1.0"
 description = "Python library for mass download/scraping of images from different sites"
-authors = ["Tensor <narutokelechi@gmail.com>"]
+authors = ["tensor_kelechi <narutokelechi@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
+rich = "^13.7.1"
+requests = "^2.32.3"
+selenium = "^4.21.0"
+tqdm = "^4.66.4"
 
 
 [build-system]

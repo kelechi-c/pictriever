@@ -1,4 +1,9 @@
-import requests, os, shutil, rich, argparse
+import requests
+import bs4
+import os
+import shutil
+import rich
+import argparse
 
 from tqdm.auto import tqdm
 from selenium import webdriver
@@ -14,43 +19,45 @@ pexel_img_class = "MediaCard_image__yVXRE"
 # Webdriver initialization
 drive_opts = Options()
 drive_opts.add_argument("-headless")
-
 driver = webdriver.Firefox(options=drive_opts)
 
+bs4.BeautifulSoup
 # get site content
-
 page = driver.get(pexel_url)
 driver.implicitly_wait(100)
 
 # get image tags
 image_tags = driver.find_elements(By.CSS_SELECTOR, f"img.{pexel_img_class}")
 
-image_urls = [link.get_attribute("src") for link in image_tags] # Then get the links themselves
+image_urls = [
+    link.get_attribute("src") for link in image_tags
+]  # Then get the links themselves
 
 
+# format filename and return string with valid extension
 def format_filename(file_name: str):
     text = file_name.split(".jpeg")[0]
-    text = text + '.jpeg'
-    
+    text = text + ".jpeg"
+
     return text
 
 
 def download_images(link_list: list):
-
-    k = 0
+    k = 0  # count init
     file_list = []
 
     for image_link in tqdm(link_list):
         try:
+            # Download image
             file_res = requests.get(image_link, stream=True)
             image_file = format_filename(os.path.basename(image_link))
             file_path = os.path.join(out_folder, image_file)
 
-            with open(file_path, "wb") as file_writer:
+            with open(file_path, "wb") as file_writer:  # Write to file
                 file_res.raw.decode_content = True
                 shutil.copyfileobj(file_res.raw, file_writer)
 
-            rich.print(f"[bold green] {image_file} successfully downloaded :lightning:")
+            rich.print(f"[bold green] {image_file} successfully downloaded")
             file_list.append(image_file)
             k += 1
 
@@ -59,5 +66,5 @@ def download_images(link_list: list):
             continue
 
 
-if __name__=='main':
+if __name__ == "main":
     download_images(image_urls)
