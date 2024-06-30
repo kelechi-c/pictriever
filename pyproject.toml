@@ -2,11 +2,18 @@
 name = "pictriever"
 version = "0.1.0"
 description = "Python library for image scraping from popular image gallery sites"
-authors = ["tensor_kelechi <kelechichibuzo7@gmail.com>"]
+authors = ["tensorkelechi <kelechichibuzo7@gmail.com>"]
 readme = "README.md"
+homepage = "https://github.com/kelechi-c/pictriever"
+repository = "https://github.com/kelechi-c/pictriever"
+keywords = ["image", "datasets", "scraping"]
+license = 'apache 2.0'
+include = [
+    "LICENSE",
+]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.6"
 rich = "^13.7.1"
 requests = "^2.32.3"
 selenium = "^4.21.0"

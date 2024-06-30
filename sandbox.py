@@ -1,70 +1,10 @@
-import requests
-import bs4
-import os
-import shutil
-import rich
-import argparse
+from pictriever.image_scraper import BingImages
 
-from tqdm.auto import tqdm
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.common.by import By
+image_scraper = BingImages("clouds", 22, 100)  # initialize scraper instance
 
-image_folder = "moondream_images"
-# os.mkdir(image_folder)
-out_folder = os.path.join(os.getcwd(), image_folder)
-pexel_url = "https://www.pexels.com/"
-pexel_img_class = "MediaCard_image__yVXRE"
+imlinks = image_scraper.get_imlinks(
+    get_all_links=True)  # for image link retrieval
 
-# Webdriver initialization
-drive_opts = Options()
-drive_opts.add_argument("-headless")
-driver = webdriver.Firefox(options=drive_opts)
-
-bs4.BeautifulSoup
-# get site content
-page = driver.get(pexel_url)
-driver.implicitly_wait(100)
-
-# get image tags
-image_tags = driver.find_elements(By.CSS_SELECTOR, f"img.{pexel_img_class}")
-
-image_urls = [
-    link.get_attribute("src") for link in image_tags
-]  # Then get the links themselves
-
-
-# format filename and return string with valid extension
-def format_filename(file_name: str):
-    text = file_name.split(".jpeg")[0]
-    text = text + ".jpeg"
-
-    return text
-
-
-def download_images(link_list: list):
-    k = 0  # count init
-    file_list = []
-
-    for image_link in tqdm(link_list):
-        try:
-            # Download image
-            file_res = requests.get(image_link, stream=True)
-            image_file = format_filename(os.path.basename(image_link))
-            file_path = os.path.join(out_folder, image_file)
-
-            with open(file_path, "wb") as file_writer:  # Write to file
-                file_res.raw.decode_content = True
-                shutil.copyfileobj(file_res.raw, file_writer)
-
-            rich.print(f"[bold green] {image_file} successfully downloaded")
-            file_list.append(image_file)
-            k += 1
-
-        except Exception as e:
-            rich.print(f"Well...-> [bold red]{e}[/bold red]")
-            continue
-
-
-if __name__ == "main":
-    download_images(image_urls)
+image_scraper.download_images(
+    imlinks, "clouds_", verbose=True
+)  # download all images from the links

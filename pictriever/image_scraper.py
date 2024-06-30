@@ -30,7 +30,7 @@ def _scrolldelay(driver, min_count):
         time.sleep(0.1)
         if stopScrolling > math.floor(min_count/2):
             break
-        time.sleep(1)
+    time.sleep(1)
 
 
 def _init_webdriver(url):
